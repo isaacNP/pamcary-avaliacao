@@ -1,14 +1,18 @@
 package br.com.pamcary.controller;
 
 import br.com.pamcary.dto.PessoaFisicaDTO;
+import br.com.pamcary.dto.PessoaFisicaForm;
 import br.com.pamcary.exception.DataNotFoundException;
 import br.com.pamcary.service.PessoaFisicaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Api(tags = "PessoaFisica")
 @RestController
@@ -33,6 +37,20 @@ public class PessoaController {
     @DeleteMapping("deleteById/{id}")
     public ResponseEntity<Object> deleteById(@PathVariable("id") Short codigo) throws DataNotFoundException {
         pessoaFisicaService.deleteByid(codigo);
+        return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(nickname = "create", value = "Insere um novo registro de pessoa fisica")
+    @PostMapping("create")
+    public ResponseEntity<Object> create(@Valid @RequestBody PessoaFisicaForm pessoaFisicaForm) {
+        pessoaFisicaService.create(pessoaFisicaForm);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @ApiOperation(nickname = "update", value = "Altera um registro de pessoa fisica já existente")
+    @PutMapping("update")
+    public ResponseEntity<Object> update(@Valid @RequestBody PessoaFisicaForm pessoaFisicaForm) throws DataNotFoundException {
+        pessoaFisicaService.update(pessoaFisicaForm);
         return ResponseEntity.noContent().build();
     }
 

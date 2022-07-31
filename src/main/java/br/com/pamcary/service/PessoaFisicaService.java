@@ -1,6 +1,7 @@
 package br.com.pamcary.service;
 
 import br.com.pamcary.dto.PessoaFisicaDTO;
+import br.com.pamcary.dto.PessoaFisicaForm;
 import br.com.pamcary.exception.DataNotFoundException;
 import br.com.pamcary.model.PessoaFisica;
 import br.com.pamcary.repository.PessoaFisicaRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -44,5 +46,19 @@ public class PessoaFisicaService {
         }
 
         pessoaFisicaRepository.delete(pessoaFisica.get());
+    }
+
+    public void create(PessoaFisicaForm pessoaFisicaForm) {
+
+        pessoaFisicaRepository.save(new PessoaFisica(pessoaFisicaForm));
+    }
+
+    public void update(PessoaFisicaForm pessoaFisicaForm) throws DataNotFoundException {
+
+        if(Objects.isNull(pessoaFisicaForm.getCodigo()) || !pessoaFisicaRepository.existsById(pessoaFisicaForm.getCodigo())){
+            throw new DataNotFoundException("Registro não encontrado");
+        }
+
+        pessoaFisicaRepository.save(new PessoaFisica(pessoaFisicaForm));
     }
 }

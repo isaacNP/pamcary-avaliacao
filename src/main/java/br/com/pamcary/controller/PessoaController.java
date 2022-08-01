@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Api(tags = "PessoaFisica")
-@RestController
+@RestController("/pessoa")
 public class PessoaController {
 
     @Autowired

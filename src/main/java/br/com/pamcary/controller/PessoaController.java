@@ -2,6 +2,7 @@ package br.com.pamcary.controller;
 
 import br.com.pamcary.dto.PessoaFisicaDTO;
 import br.com.pamcary.dto.PessoaFisicaForm;
+import br.com.pamcary.exception.BusinessException;
 import br.com.pamcary.exception.DataNotFoundException;
 import br.com.pamcary.service.PessoaFisicaService;
 import io.swagger.annotations.Api;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Api(tags = "PessoaFisica")
 @RestController("/pessoa")
@@ -31,6 +33,12 @@ public class PessoaController {
     @GetMapping("findById/{id}")
     public ResponseEntity<PessoaFisicaDTO> findById(@PathVariable("id") Short codigo) throws DataNotFoundException {
         return ResponseEntity.ok(pessoaFisicaService.findById(codigo));
+    }
+
+    @ApiOperation(nickname = "findByCpf", value = "Busca registro de pessoa fisica a partir do CPF")
+    @GetMapping("findByCpf/{cpf}")
+    public ResponseEntity<List<PessoaFisicaDTO>> findByCpf(@PathVariable("cpf") String cpf) throws BusinessException {
+        return ResponseEntity.ok(pessoaFisicaService.findByCPF(cpf));
     }
 
     @ApiOperation(nickname = "deleteById", value = "Exclui registro de pessoa fisica a partir do id")

@@ -2,6 +2,7 @@ package br.com.pamcary.service;
 
 import br.com.pamcary.dto.PessoaFisicaDTO;
 import br.com.pamcary.dto.PessoaFisicaForm;
+import br.com.pamcary.exception.BusinessException;
 import br.com.pamcary.exception.DataNotFoundException;
 import br.com.pamcary.model.PessoaFisica;
 import br.com.pamcary.repository.PessoaFisicaRepository;
@@ -43,6 +44,10 @@ class PessoaFisicaServiceTest {
 
     @Mock
     private PessoaFisicaRepository pessoaFisicaRepository;
+
+    private final static String VALID_CPF = "54213325687";
+    private final static String INVALID_CPF_REGEX = "5421332568x";
+    private final static String INVALID_CPF_LENGTH = "5421332568";
 
     @Test
     @DisplayName("findAll OK")
@@ -151,5 +156,35 @@ class PessoaFisicaServiceTest {
                 DataNotFoundException.class, () -> pessoaFisicaService.update(pessoaFisicaForm)
         );
 
+    }
+
+    @Test
+    @DisplayName("findByCpf OK")
+    void findByCpf() throws BusinessException {
+
+        List<PessoaFisica> pessoaFisicaList = IntStream.range(0,2).mapToObj(value -> pessoaFisica).collect(Collectors.toList());
+
+
+        when(pessoaFisicaRepository.findByCpf(anyString())).thenReturn(pessoaFisicaList);
+
+        assertNotNull(pessoaFisicaService.findByCPF(VALID_CPF));
+    }
+
+    @Test
+    @DisplayName("findByCpf BusinessExeption !cpf.matches(regex)")
+    void findByCpfRegex() {
+
+        assertThrows(
+                BusinessException.class, () -> pessoaFisicaService.findByCPF(INVALID_CPF_REGEX)
+        );
+    }
+
+    @Test
+    @DisplayName("findByCpf BusinessExeption cpf.length() != 11")
+    void findByCpfLength() {
+
+        assertThrows(
+                BusinessException.class, () -> pessoaFisicaService.findByCPF(INVALID_CPF_LENGTH)
+        );
     }
 }

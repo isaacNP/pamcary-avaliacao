@@ -2,6 +2,7 @@ package br.com.pamcary.service;
 
 import br.com.pamcary.dto.PessoaFisicaDTO;
 import br.com.pamcary.dto.PessoaFisicaForm;
+import br.com.pamcary.exception.BusinessException;
 import br.com.pamcary.exception.DataNotFoundException;
 import br.com.pamcary.model.PessoaFisica;
 import br.com.pamcary.repository.PessoaFisicaRepository;
@@ -11,14 +12,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PessoaFisicaService {
 
     @Autowired
     private PessoaFisicaRepository pessoaFisicaRepository;
+
+    private final String regex = "\\d+";
 
     public Page<PessoaFisicaDTO> findAll(Integer page, Integer size) {
 
@@ -60,5 +65,14 @@ public class PessoaFisicaService {
         }
 
         pessoaFisicaRepository.save(new PessoaFisica(pessoaFisicaForm));
+    }
+
+    public List<PessoaFisicaDTO> findByCPF(String cpf) throws BusinessException {
+
+        if(cpf.length() != 11 || !cpf.matches(regex)) {
+            throw new BusinessException("CPF inválido");
+        }
+
+        return pessoaFisicaRepository.findByCpf(cpf).stream().map(PessoaFisicaDTO::new).collect(Collectors.toList());
     }
 }
